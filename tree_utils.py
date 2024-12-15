@@ -40,7 +40,7 @@ def print_tree(node, tokenizer, prefix="", is_last=True, highlight_path=None):
         raw_text = tokenizer.decode(node.action_tokens, skip_special_tokens=False)
         action_text = raw_text.replace("\n", "\\n")
 
-    print(f"{prefix}{connector}{marker}action={action_text}, reward={node.reward_score}, visits={node.visit_count}, value_sum={node.value_sum:.2f}, avg={value_avg:.2f}")
+    print(f"{prefix}{connector}{marker}action={action_text}, reward={node.reward_score:.2f}, visits={node.visit_count}, value_sum={node.value_sum:.2f}, avg={value_avg:.2f}")
 
     children = node.children
     for i, child in enumerate(children):
