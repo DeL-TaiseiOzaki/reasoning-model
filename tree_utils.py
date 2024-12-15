@@ -62,4 +62,5 @@ def print_tree_with_best_path(final_node, tokenizer):
         root_node = root_node.parent
 
     # ツリー表示
+    print("ツリー構造を表示します（'*'が付いているノードは最終選択パス上）：")
     print_tree(root_node, tokenizer, highlight_path=best_path_node_ids)
