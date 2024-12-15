@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "reasoning-model"
+version = "0.1.0"
+description = "MCTS integrated causal language model generation"
+authors = ["Hajime Yagihara"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+transformers = "^4.0.0"
+torch = "^2.0.0"
+numpy = "^1.20.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
