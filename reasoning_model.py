@@ -140,6 +140,16 @@ class ReasoningCausalLM(PreTrainedModel):
         from mcts_node import MCTSNode
         from mcts import mcts_search_until_eos
 
+        if input_ids is None:
+            raise ValueError("input_ids cannot be None.")
+
+        # バッチサイズチェック
+        if input_ids.size(0) != 1:
+            raise ValueError("Batch size must be 1.")
+
+        # input_idsはbatchサイズ1を仮定
+        input_ids = input_ids[0].tolist()
+
         root = MCTSNode(input_ids)
         complete_path_tokens, final_node = mcts_search_until_eos(
             root_node=root,
