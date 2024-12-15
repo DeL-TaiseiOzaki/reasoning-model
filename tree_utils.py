@@ -1,10 +1,10 @@
-def print_tree(node, decode_func, prefix="", is_last=True, highlight_path=None):
+def print_tree(node, tokenizer, prefix="", is_last=True, highlight_path=None):
     """
     MCTSツリーを表示する。
 
     Args:
         node (MCTSNode): ツリーのルートまたは現在のノード
-        decode_func (Callable[[List[int]], str]): トークン列を文字列に変換する関数
+        tokenizer (PreTrainedTokenizer): トークン列を文字列に変換するトークナイザ
         prefix (str, optional): 枝線描画用の前置文字列。内部使用。
         is_last (bool, optional): 兄弟中最後の子ノードかどうか。内部使用。
         highlight_path (Set[int], optional): 強調表示するノードIDの集合
@@ -17,14 +17,14 @@ def print_tree(node, decode_func, prefix="", is_last=True, highlight_path=None):
     if node.action_tokens is None:
         action_text = "[ROOT]"
     else:
-        action_text = decode_func(node.action_tokens)
+        action_text = tokenizer.decode(node.action_tokens, skip_special_tokens=True)
 
     print(f"{prefix}{connector}{marker}action={action_text}, visits={node.visit_count}, value_sum={node.value_sum:.2f}, avg={value_avg:.2f}")
 
     children = node.children
     for i, child in enumerate(children):
         is_last_child = (i == len(children)-1)
-        print_tree(child, decode_func, prefix + ("    " if is_last else "│   "), is_last_child, highlight_path)
+        print_tree(child, tokenizer, prefix + ("    " if is_last else "│   "), is_last_child, highlight_path)
 
 def get_best_path_node_ids(node):
     """
