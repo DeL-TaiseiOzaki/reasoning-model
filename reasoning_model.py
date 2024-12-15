@@ -36,7 +36,7 @@ class ReasoningCausalLM(PreTrainedModel):
     MCTSを用いて、逐次的なステップごとのサンプル生成を試み、その中からUCB1などを用いて最良と思われるノードを選択します。
     """
 
-    def __init__(self, model_name, step_separator_ids, eos_token_id, device=None):
+    def __init__(self, model_name, step_separator_ids, eos_token_id):
         """
         コンストラクタ。
 
@@ -53,8 +53,10 @@ class ReasoningCausalLM(PreTrainedModel):
         )
         self.model.eval()
 
-        if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+        for sep_id in step_separator_ids:
+            if len(sep_id) != 1:
+                print("sep_id: ", sep_id)
+                raise ValueError(f"ステップ区切り文字'{step_separator}'は1トークンではありません。別の文字列を使用してください。")
 
         self.step_separator_ids = step_separator_ids
         self.eos_token_id = eos_token_id

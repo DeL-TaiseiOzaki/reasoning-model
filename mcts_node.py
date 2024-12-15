@@ -20,6 +20,8 @@ class MCTSNode:
 
         self.visit_count = 0
         self.value_sum = 0.0
+        self.reward_score = 0.0  # 拡張直後に得られた報酬スコアを待避しておく
+                                 # Backpropagationでこれを使ってvisit_countやvalue_sumを更新する。
 
     def is_leaf(self):
         """
@@ -58,6 +60,8 @@ class MCTSNode:
             new_ids, value = llm.generate_single_step(self.input_ids, beam_k=5, max_new_tokens=mini_step_size)
             diff_tokens = new_ids[len(self.input_ids):]
             child_node = MCTSNode(new_ids, parent=self, action_tokens=diff_tokens)
-            child_node.visit_count = 1
-            child_node.value_sum = value
+            # 子ノードにはここでvalueをreward_scoreとして格納するのみ
+            child_node.reward_score = value
+            # child_node.visit_count = 1
+            # child_node.value_sum = value
             self.children.append(child_node)

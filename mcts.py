@@ -76,9 +76,9 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32):
             # 拡張できなかった場合
             backpropagate(node, 0.0)
         else:
-            # 最良の子
-            best_child = max(node.children, key=lambda c: c.value_sum/c.visit_count if c.visit_count>0 else -float('inf'))
-            backpropagate(best_child, best_child.value_sum / best_child.visit_count)
+            # reward_scoreを用いてbest_childを選ぶ
+            best_child = max(node.children, key=lambda c: c.reward_score)
+            backpropagate(best_child, best_child.reward_score)
 
     best_child = max(root.children, key=lambda c: c.value_sum/c.visit_count if c.visit_count>0 else -float('inf'))
     return best_child

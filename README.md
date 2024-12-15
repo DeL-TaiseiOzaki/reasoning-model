@@ -15,7 +15,18 @@
 poetry install
 ```
 
-## 使い方例
+## 使い方
+### 準備
+```
+# 1. GitHubリポジトリからクローン
+git clone https://github.com/Hajime-Y/reasoning-model.git
+cd reasoning-model
+
+# 2. 必要なライブラリをpipインストール
+poetry install
+```
+
+### 生成
 ```
 from transformers import AutoTokenizer
 from reasoning_model import ReasoningCausalLM
