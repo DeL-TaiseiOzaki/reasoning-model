@@ -122,7 +122,7 @@ class ReasoningCausalLM(PreTrainedModel):
         new_input_ids = input_ids + gen_tokens
         return new_input_ids, v
 
-    def generate(self, input_ids, iterations_per_step=5, max_iterations=15, mini_step_size=32):
+    def generate(self, input_ids, iterations_per_step=5, max_iterations=15, mini_step_size=32, **kwargs):
         """
         MCTSを用いてトークン列を生成する。
 
@@ -131,6 +131,7 @@ class ReasoningCausalLM(PreTrainedModel):
             iterations_per_step (int, optional): 各ステップでのMCTS反復回数。デフォルト5。
             max_iterations (int, optional): MCTSステップの最大反復数。デフォルト15。
             mini_step_size (int, optional): 1ステップあたりの最大新規トークン生成数。デフォルト32。
+            **kwargs: attention_maskなど他のmodel_inputsを受けるが未使用。
 
         Returns:
             Tuple[List[int], MCTSNode]:
