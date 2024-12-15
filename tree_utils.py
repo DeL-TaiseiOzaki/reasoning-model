@@ -36,8 +36,9 @@ def print_tree(node, tokenizer, prefix="", is_last=True, highlight_path=None):
         # ルートノード
         action_text = "[ROOT]"
     else:
-        # action_tokensをデコード
-        action_text = tokenizer.decode(node.action_tokens, skip_special_tokens=True)
+        # action_tokensをデコードし改行をエスケープ
+        raw_text = tokenizer.decode(node.action_tokens, skip_special_tokens=True)
+        action_text = raw_text.replace("\n", "\\n")
 
     print(f"{prefix}{connector}{marker}action={action_text}, visits={node.visit_count}, value_sum={node.value_sum:.2f}, avg={value_avg:.2f}")
 
