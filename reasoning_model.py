@@ -44,7 +44,6 @@ class ReasoningCausalLM(PreTrainedModel):
             model_name (str): 使用する事前学習済みモデル名。
             step_separator_ids (List[int]): ステップ区切りトークンIDのリスト(1トークン前提)。
             eos_token_id (int): EOSトークンID。
-            device (str, optional): デバイス指定。デフォルトは"cuda"が使用可能ならcuda。
         """
         super().__init__(AutoModelForCausalLM.from_pretrained(model_name).config)
         self.model = AutoModelForCausalLM.from_pretrained(
@@ -56,7 +55,6 @@ class ReasoningCausalLM(PreTrainedModel):
 
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.device = self.model.device
 
         self.step_separator_ids = step_separator_ids
         self.eos_token_id = eos_token_id
@@ -87,7 +85,7 @@ class ReasoningCausalLM(PreTrainedModel):
                 更新後のトークン列と、そのステップにおける信頼度(平均値)。
         """
         stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria(step_id) for step_id in self.step_separator_ids])
-        input_tensor = torch.tensor([input_ids], dtype=torch.long, device=self.device)
+        input_tensor = torch.tensor([input_ids], dtype=torch.long, device=self.model.device)
 
         outputs = self.model.generate(
             input_tensor,

@@ -2,10 +2,9 @@
 
 本プロジェクトでは、Hugging Face Transformersの `AutoModelForCausalLM` を拡張し、Monte Carlo Tree Search (MCTS) を用いたステップごとの探索に基づくテキスト生成を実行します。  
 **重要:**
-- トークナイズは外部で行ってください。  
-- `ReasoningCausalLM`はトークン列を直接受け取り、MCTSによる探索を行い、トークン列で出力します。  
-- EOSトークンやステップ区切りトークンIDも事前にユーザーが特定してモデルに渡してください。  
-- 最終的な生成出力の文字列化やツリー表示時のトークナイズは外部で行ってください。
+ - `ReasoningCausalLM`はトークン列を直接受け取り、MCTSによる探索を行い、トークン列で出力します。  
+ - EOSトークンやステップ区切りトークンIDも事前にユーザーが特定してモデルに渡してください。  
+ - 最終的な生成出力の文字列化やツリー表示時のトークナイズは外部で行ってください。
 
 ## インストール
 
@@ -22,7 +21,7 @@ from transformers import AutoTokenizer
 from reasoning_model import ReasoningCausalLM
 from tree_utils import print_tree, get_best_path_node_ids
 
-model_name = "HachiML/QwQ-CoT-0.5B-JA-v0.7"
+model_name = "HachiML/QwQ-CoT-0.5B-JA-v0.4"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 # 必要なトークンIDを取得
