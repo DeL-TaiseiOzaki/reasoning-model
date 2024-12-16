@@ -24,7 +24,7 @@ cd reasoning-model
 poetry install
 
 # pip利用（非推奨）
-pip install transformers torch numpy
+pip install transformers torch numpy gguf
 ```
 
 ### パス追加（Google Colab使用時）
