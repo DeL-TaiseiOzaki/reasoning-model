@@ -48,12 +48,12 @@ class ReasoningModelForCausalLM():
         self.model.eval()
 
     @classmethod
-    def from_pretrained(cls, model_name, torch_dtype="auto", device_map="auto", **kwargs):
+    def from_pretrained(cls, pretrained_model_name_or_path, torch_dtype="auto", device_map="auto", **kwargs):
         """
         TransformersのAutoモデルと同様のインターフェースでモデルをロードするクラスメソッド。
 
         Args:
-            model_name (str): モデル名（HuggingFace HubのIDなど）
+            pretrained_model_name_or_path (str | os.PathLike): モデル名（HuggingFace HubのIDなど）もしくはパス
             torch_dtype (str or torch.dtype, optional): モデルロード時のdtype指定。デフォルト"auto"。
             device_map (str or Dict, optional): デバイス配置指定。デフォルト"auto"。
             **kwargs: その他AutoModelForCausalLM.from_pretrainedに渡したい追加の引数。
@@ -62,7 +62,7 @@ class ReasoningModelForCausalLM():
             ReasoningCausalLM: 初期化済みのReasoningCausalLMインスタンス。
         """
         model = AutoModelForCausalLM.from_pretrained(
-            model_name,
+            pretrained_model_name_or_path,
             torch_dtype=torch_dtype,
             device_map=device_map,
             **kwargs
