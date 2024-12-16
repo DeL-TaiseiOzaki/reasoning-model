@@ -125,7 +125,7 @@ class ReasoningCausalLM(PreTrainedModel):
         new_input_ids = input_ids + gen_tokens
         return new_input_ids, v
 
-    def generate(self, input_ids, iterations_per_step=5, max_iterations=15, mini_step_size=32, expand_threshold=0, **kwargs):
+    def generate(self, input_ids, iterations_per_step=5, max_iterations=15, mini_step_size=32, expand_threshold=0, step_separator_ids=None, **kwargs):
         """
         MCTSを用いてトークン列を生成する。
 
@@ -135,6 +135,7 @@ class ReasoningCausalLM(PreTrainedModel):
             max_iterations (int, optional): MCTSステップの最大反復数。デフォルト15。
             mini_step_size (int, optional): 1ステップあたりの最大新規トークン生成数。デフォルト32。
             expand_threshold (int, optional): ノードを拡張するために必要なvisit_countの閾値。デフォルト0。
+            step_separator_ids (List[int], optional): Reasoning Action StrategyでStep as Actionを採用するときの区切りとなるトークンのIDリスト。Noneとするとmodel configの値が利用される。[]を渡すとStep as Actionが不採用（必ずmini-stepで区切り）となる。
             **kwargs: attention_maskなど他のmodel_inputsを受けるが未使用。
 
         Returns:
@@ -161,7 +162,8 @@ class ReasoningCausalLM(PreTrainedModel):
             iterations_per_step=iterations_per_step,
             max_iterations=max_iterations,
             mini_step_size=mini_step_size, 
-            expand_threshold=expand_threshold
+            expand_threshold=expand_threshold, 
+            step_separator_ids=step_separator_ids
         )
 
         final_tokens = []
