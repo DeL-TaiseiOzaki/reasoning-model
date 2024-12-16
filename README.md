@@ -4,10 +4,12 @@
   <img src="assets/top_image.png" alt="Top Image">
 </p>
 
-本プロジェクトでは、Hugging Face Transformersの `AutoModelForCausalLM` を拡張し、Monte Carlo Tree Search (MCTS) を用いたステップごとの探索に基づくテキスト生成を実行します。  
- - `ReasoningModelForCausalLM` はトークン列を直接受け取り、MCTSによる探索を行い、トークン列で出力します。  
- - モデルはトークンのリストと探索した木構造を返します。
- - `tree_utils` の `print_tree_with_best_path` を使うと、ツリー構造の確認ができます。
+本プロジェクトでは、Hugging Face Transformersの `AutoModelForCausalLM` を拡張し、Monte Carlo Tree Search (MCTS) を用いたステップごとの探索に基づくテキスト生成を実行します。 これによって、CoTデータセットで学習されたモデルの推論能力を更に向上させます。 
+ - `ReasoningModelForCausalLM` はトークン列を直接受け取り、MCTSによる探索を行います。
+ - モデルは`.generate`後に、以下を返します。
+    - 最終推論結果のトークンリスト
+    - 探索した木構造
+ - `tree_utils` の `print_tree_with_best_path` を使うと、ツリー構造が選択されたパスと共に可視化できます。
 
 ## 使い方
 ### 準備
