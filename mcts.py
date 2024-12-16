@@ -49,7 +49,7 @@ def backpropagate(node, value):
         node.value_sum += value
         node = node.parent
 
-def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=0):
+def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=0, step_separator_ids=None):
     """
     MCTS探索をrootノードから指定回数繰り返し、最良と判断される子ノードを返す。
 
@@ -59,6 +59,7 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=0):
         iterations (int, optional): MCTSの繰り返し回数。デフォルト5。
         mini_step_size (int, optional): 1ステップでの最大生成トークン数。デフォルト32。
         expand_threshold (int, optional): ノードを拡張するために必要なvisit_countの閾値。デフォルト0。
+        step_separator_ids (List[int], optional): Reasoning Action StrategyでStep as Actionを採用するときの区切りとなるトークンのIDリスト
 
     Returns:
         MCTSNode: 最良の子ノード
@@ -71,7 +72,7 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=0):
 
         # Expansion: visit_countがexpand_thresholdを超えていたら拡張する
         if node.visit_count > expand_threshold:
-            node.expand(llm, beam_size=2, mini_step_size=mini_step_size)
+            node.expand(llm, beam_size=2, mini_step_size=mini_step_size, step_separator_ids=step_separator_ids)
         else:
             # 閾値未満なら拡張せず、そのままバックプロパゲーション
             backpropagate(node, node.reward_score)
@@ -89,7 +90,7 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=0):
     best_child = max(root.children, key=lambda c: c.value_sum/c.visit_count if c.visit_count>0 else -float('inf'))
     return best_child
 
-def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=20, mini_step_size=32, expand_threshold=0):
+def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=20, mini_step_size=32, expand_threshold=0, step_separator_ids=None):
     """
     EOSが生成されるまでMCTSによる探索を繰り返す。
 
@@ -100,6 +101,7 @@ def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=
         max_iterations (int, optional): 最大ステップ数。デフォルト20。
         mini_step_size (int, optional): 1ステップでの最大生成トークン数。デフォルト32。
         expand_threshold (int, optional): ノードを拡張するために必要なvisit_countの閾値。デフォルト0。
+        step_separator_ids (List[int], optional): Reasoning Action StrategyでStep as Actionを採用するときの区切りとなるトークンのIDリスト。Noneとするとmodel configの値が利用される。[]を渡すとStep as Actionが不採用（必ずmini-stepで区切り）となる。
 
     Returns:
         Tuple[List[List[int]], MCTSNode]:
@@ -109,7 +111,7 @@ def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=
     complete_path_tokens = []
 
     for _ in range(max_iterations):
-        best_node = mcts_search(current_node, llm, iterations=iterations_per_step, mini_step_size=mini_step_size, expand_threshold=expand_threshold)
+        best_node = mcts_search(current_node, llm, iterations=iterations_per_step, mini_step_size=mini_step_size, expand_threshold=expand_threshold, step_separator_ids=step_separator_ids)
         if best_node.action_tokens is not None:
             complete_path_tokens.append(best_node.action_tokens)
         current_node = best_node

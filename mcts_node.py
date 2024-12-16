@@ -47,7 +47,7 @@ class MCTSNode:
             return False
         return llm.contains_eos_id(self.action_tokens)
 
-    def expand(self, llm, beam_size=2, mini_step_size=32):
+    def expand(self, llm, beam_size=2, mini_step_size=32, step_separator_ids=None):
         """
         ノードを展開し、子ノードを生成する。
 
@@ -55,9 +55,10 @@ class MCTSNode:
             llm (ReasoningCausalLM): モデルインスタンス。
             beam_size (int, optional): 拡張時に生成する子ノード数。デフォルト2。
             mini_step_size (int, optional): 1ステップでの最大生成トークン数。デフォルト32。
+            step_separator_ids (List[int], optional): Reasoning Action StrategyでStep as Actionを採用するときの区切りとなるトークンのIDリスト
         """
         for _ in range(beam_size):
-            new_ids, value = llm.generate_single_step(self.input_ids, beam_k=5, max_new_tokens=mini_step_size)
+            new_ids, value = llm.generate_single_step(self.input_ids, beam_k=5, max_new_tokens=mini_step_size, step_separator_ids=step_separator_ids)
             diff_tokens = new_ids[len(self.input_ids):]
             child_node = MCTSNode(new_ids, parent=self, action_tokens=diff_tokens)
             # 子ノードにはここでvalueをreward_scoreとして格納するのみ

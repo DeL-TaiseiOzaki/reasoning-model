@@ -56,8 +56,7 @@ class ReasoningCausalLM(PreTrainedModel):
             if len(sep_id) != 1:
                 raise ValueError(f"Invalid step_separator (sep_id: {sep_id}). Please use a single token string.")
 
-        self.step_separator_ids = step_separator_ids
-        self.eos_token_id = self.model.config.eos_token_id
+        self.step_separator_ids = self.model.config.step_separator_ids
 
     def contains_eos_id(self, token_list):
         """
@@ -69,9 +68,9 @@ class ReasoningCausalLM(PreTrainedModel):
         Returns:
             bool: EOSトークンIDを含む場合True
         """
-        return self.eos_token_id in token_list
+        return self.model.config.eos_token_id in token_list
 
-    def generate_single_step(self, input_ids, beam_k=5, max_new_tokens=32):
+    def generate_single_step(self, input_ids, beam_k=5, max_new_tokens=32, step_separator_ids=None):
         """
         1ステップ分のテキスト生成を行う。
 
@@ -79,23 +78,30 @@ class ReasoningCausalLM(PreTrainedModel):
             input_ids (List[int]): 現在までの入力トークン列。
             beam_k (int, optional): サンプリング時のtop_k値。デフォルト5。
             max_new_tokens (int, optional): 1ステップで生成する最大トークン数。デフォルト32。
+            step_separator_ids (List[int], optional): Reasoning Action StrategyでStep as Actionを採用するときの区切りとなるトークンのIDリスト
 
         Returns:
             Tuple[List[int], float]:
                 更新後のトークン列と、そのステップにおける信頼度(平均値)。
         """
-        stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria(step_id) for step_id in self.step_separator_ids])
         input_tensor = torch.tensor([input_ids], dtype=torch.long, device=self.model.device)
+        generate_kwargs = {
+            'do_sample': True,
+            'top_k': beam_k,
+            'max_new_tokens': max_new_tokens,
+            'return_dict_in_generate': True,
+            'output_scores': True
+        }
 
-        outputs = self.model.generate(
-            input_tensor,
-            do_sample=True,
-            top_k=beam_k,
-            max_new_tokens=max_new_tokens,
-            stopping_criteria=stopping_criteria,
-            return_dict_in_generate=True,
-            output_scores=True
-        )
+        # stopping_criteriaの設定
+        if step_separator_ids is not None:
+            stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria([step_id]) for step_id in step_separator_ids])
+            generate_kwargs['stopping_criteria'] = stopping_criteria
+        elif hasattr(self.model.config, 'step_separator_ids') and self.model.config.step_separator_ids:
+            stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria([step_id]) for step_id in self.model.config.step_separator_ids])
+            generate_kwargs['stopping_criteria'] = stopping_criteria
+
+        outputs = self.model.generate(input_tensor, **generate_kwargs)
 
         generated_ids = outputs.sequences
         scores = outputs.scores
