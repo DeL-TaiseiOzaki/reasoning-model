@@ -70,7 +70,6 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=1):
             node = select_child(node)
 
         # Expansion: visit_countがexpand_thresholdを超えていたら拡張する
-        node.expand(llm, beam_size=2, mini_step_size=mini_step_size)
         if node.visit_count > expand_threshold:
             node.expand(llm, beam_size=2, mini_step_size=mini_step_size)
         else:
