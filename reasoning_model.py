@@ -82,10 +82,10 @@ class ReasoningCausalLM(PreTrainedModel):
         # stopping_criteriaの設定
         stopping_criteria = None
         if step_separator_ids is not None:
-            stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria([step_id]) for step_id in step_separator_ids])
+            stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria(step_id) for step_id in step_separator_ids])
             print(f"設定されているstep_separator_idsは{step_separator_ids}です。")
         elif hasattr(self.model.config, 'step_separator_ids') and self.model.config.step_separator_ids:
-            stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria([step_id]) for step_id in self.model.config.step_separator_ids])
+            stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria(step_id) for step_id in self.model.config.step_separator_ids])
             print(f"設定されているstep_separator_idsは{self.model.config.step_separator_ids}です!")
         else:
             print(f"step_separator_idsは設定されていません。")
