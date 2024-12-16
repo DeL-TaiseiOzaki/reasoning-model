@@ -36,14 +36,13 @@ class ReasoningCausalLM(PreTrainedModel):
     MCTSを用いて、逐次的なステップごとのサンプル生成を試み、その中からUCB1などを用いて最良と思われるノードを選択します。
     """
 
-    def __init__(self, model_name, step_separator_ids, eos_token_id):
+    def __init__(self, model_name, step_separator_ids):
         """
         コンストラクタ。
 
         Args:
             model_name (str): 使用する事前学習済みモデル名。
             step_separator_ids (List[int]): ステップ区切りトークンIDのリスト(1トークン前提)。
-            eos_token_id (int): EOSトークンID。
         """
         super().__init__(AutoModelForCausalLM.from_pretrained(model_name).config)
         self.model = AutoModelForCausalLM.from_pretrained(
@@ -55,11 +54,10 @@ class ReasoningCausalLM(PreTrainedModel):
 
         for sep_id in step_separator_ids:
             if len(sep_id) != 1:
-                print("sep_id: ", sep_id)
-                raise ValueError(f"ステップ区切り文字'{step_separator}'は1トークンではありません。別の文字列を使用してください。")
+                raise ValueError(f"Invalid step_separator (sep_id: {sep_id}). Please use a single token string.")
 
         self.step_separator_ids = step_separator_ids
-        self.eos_token_id = eos_token_id
+        self.eos_token_id = self.model.config.eos_token_id
 
     def contains_eos_id(self, token_list):
         """
