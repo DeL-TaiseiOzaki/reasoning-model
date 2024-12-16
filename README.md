@@ -1,9 +1,5 @@
 # MCTS-Integrated Causal LM Generation
 
-<p align="center">
-  <img src="assets/top_image.png" alt="Top Image">
-</p>
-
 本プロジェクトでは、Hugging Face Transformersの `AutoModelForCausalLM` を拡張し、Monte Carlo Tree Search (MCTS) を用いたステップごとの探索に基づくテキスト生成を実行します。  
  - `ReasoningModelForCausalLM` はトークン列を直接受け取り、MCTSによる探索を行い、トークン列で出力します。  
  - モデルはトークンのリストと探索した木構造を返します。
