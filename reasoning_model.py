@@ -78,27 +78,27 @@ class ReasoningCausalLM(PreTrainedModel):
                 更新後のトークン列と、そのステップにおける信頼度(平均値)。
         """
         input_tensor = torch.tensor([input_ids], dtype=torch.long, device=self.model.device)
-        generate_kwargs = {
-            'do_sample': True,
-            'top_k': beam_k,
-            'max_new_tokens': max_new_tokens,
-            'return_dict_in_generate': True,
-            'output_scores': True
-        }
 
         # stopping_criteriaの設定
+        stopping_criteria = None
         if step_separator_ids is not None:
             stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria([step_id]) for step_id in step_separator_ids])
-            generate_kwargs['stopping_criteria'] = stopping_criteria
             print(f"設定されているstep_separator_idsは{step_separator_ids}です。")
         elif hasattr(self.model.config, 'step_separator_ids') and self.model.config.step_separator_ids:
             stopping_criteria = StoppingCriteriaList([StepSeparatorStoppingCriteria([step_id]) for step_id in self.model.config.step_separator_ids])
-            generate_kwargs['stopping_criteria'] = stopping_criteria
             print(f"設定されているstep_separator_idsは{self.model.config.step_separator_ids}です!")
         else:
             print(f"step_separator_idsは設定されていません。")
 
-        outputs = self.model.generate(input_tensor, **generate_kwargs)
+        outputs = self.model.generate(
+            input_ids,
+            do_sample=True,
+            top_k=beam_k,
+            max_new_tokens=max_new_tokens,
+            stopping_criteria=stopping_criteria,
+            return_dict_in_generate=True,
+            output_scores=True
+        )
 
         generated_ids = outputs.sequences
         scores = outputs.scores
