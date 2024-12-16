@@ -20,15 +20,19 @@ poetry install
 # GitHubリポジトリからクローン
 git clone https://github.com/Hajime-Y/reasoning-model.git
 cd reasoning-model
-```
 
-### ライブラリ
-```
 # poetry利用
 poetry install
 
 # pip利用（非推奨）
 pip install transformers torch numpy
+```
+
+### パス追加（Google Colab使用時）
+```
+# Pythonパスにカレントディレクトリを追加
+import sys
+sys.path.append('.')  # reasoning_model.py と同じディレクトリにいるため
 ```
 
 ### 生成
