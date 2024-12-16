@@ -49,7 +49,7 @@ def backpropagate(node, value):
         node.value_sum += value
         node = node.parent
 
-def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=1):
+def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=0):
     """
     MCTS探索をrootノードから指定回数繰り返し、最良と判断される子ノードを返す。
 
@@ -58,7 +58,7 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=1):
         llm (ReasoningCausalLM): モデル
         iterations (int, optional): MCTSの繰り返し回数。デフォルト5。
         mini_step_size (int, optional): 1ステップでの最大生成トークン数。デフォルト32。
-        expand_threshold (int, optional): ノードを拡張するために必要なvisit_countの閾値。デフォルト1。
+        expand_threshold (int, optional): ノードを拡張するために必要なvisit_countの閾値。デフォルト0。
 
     Returns:
         MCTSNode: 最良の子ノード
@@ -89,7 +89,7 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=1):
     best_child = max(root.children, key=lambda c: c.value_sum/c.visit_count if c.visit_count>0 else -float('inf'))
     return best_child
 
-def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=20, mini_step_size=32):
+def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=20, mini_step_size=32, expand_threshold=0):
     """
     EOSが生成されるまでMCTSによる探索を繰り返す。
 
@@ -99,6 +99,7 @@ def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=
         iterations_per_step (int, optional): 各ステップでのMCTS探索反復回数。デフォルト5。
         max_iterations (int, optional): 最大ステップ数。デフォルト20。
         mini_step_size (int, optional): 1ステップでの最大生成トークン数。デフォルト32。
+        expand_threshold (int, optional): ノードを拡張するために必要なvisit_countの閾値。デフォルト0。
 
     Returns:
         Tuple[List[List[int]], MCTSNode]:
@@ -108,7 +109,7 @@ def mcts_search_until_eos(root_node, llm, iterations_per_step=5, max_iterations=
     complete_path_tokens = []
 
     for _ in range(max_iterations):
-        best_node = mcts_search(current_node, llm, iterations=iterations_per_step, mini_step_size=mini_step_size)
+        best_node = mcts_search(current_node, llm, iterations=iterations_per_step, mini_step_size=mini_step_size, expand_threshold=expand_threshold)
         if best_node.action_tokens is not None:
             complete_path_tokens.append(best_node.action_tokens)
         current_node = best_node
