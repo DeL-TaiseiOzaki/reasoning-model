@@ -49,7 +49,7 @@ def backpropagate(node, value):
         node.value_sum += value
         node = node.parent
 
-def mcts_search(root, llm, iterations=5, mini_step_size=32):
+def mcts_search(root, llm, iterations=5, mini_step_size=32, expand_threshold=1):
     """
     MCTS探索をrootノードから指定回数繰り返し、最良と判断される子ノードを返す。
 
@@ -58,6 +58,7 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32):
         llm (ReasoningCausalLM): モデル
         iterations (int, optional): MCTSの繰り返し回数。デフォルト5。
         mini_step_size (int, optional): 1ステップでの最大生成トークン数。デフォルト32。
+        expand_threshold (int, optional): ノードを拡張するために必要なvisit_countの閾値。デフォルト1。
 
     Returns:
         MCTSNode: 最良の子ノード
@@ -68,8 +69,14 @@ def mcts_search(root, llm, iterations=5, mini_step_size=32):
         while not node.is_leaf():
             node = select_child(node)
 
-        # Expansion
+        # Expansion: visit_countがexpand_thresholdを超えていたら拡張する
         node.expand(llm, beam_size=2, mini_step_size=mini_step_size)
+        if node.visit_count > expand_threshold:
+            node.expand(llm, beam_size=2, mini_step_size=mini_step_size)
+        else:
+            # 閾値未満なら拡張せず、そのままバックプロパゲーション
+            backpropagate(node, node.reward_score)
+            continue
 
         # Backpropagation
         if len(node.children) == 0:
