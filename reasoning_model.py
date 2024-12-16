@@ -91,7 +91,7 @@ class ReasoningCausalLM(PreTrainedModel):
             print(f"step_separator_idsは設定されていません。")
 
         outputs = self.model.generate(
-            input_ids,
+            input_tensor,
             do_sample=True,
             top_k=beam_k,
             max_new_tokens=max_new_tokens,
