@@ -84,6 +84,21 @@ print("=== ツリー構造 ===")
 print_tree_with_best_path(final_node, tokenizer)
 ```
 
+## 使い方(量子化モデル)
+通常のTransformersのAutoModelForCausalLMと同様の使い方で、量子化したモデルも利用可能。
+以下はGGUFの例。
+```
+# 使用するモデル名
+model_name = "mmnga/Marco-o1-gguf"
+file_name = "Marco-o1-Q6_K.gguf"
+
+# Tokenizerの準備
+tokenizer = AutoTokenizer.from_pretrained(model_name, gguf_file=file_name)
+
+# モデルの準備
+model = ReasoningModelForCausalLM.from_pretrained(model_name, gguf_file=file_name)
+```
+
 ## 注意事項
 未検証だが、おそらく `Qwen/QwQ-32B-Preview` や `AIDC-AI/Marco-o1` のようなモデルも実行可能。
 ただし、これらのモデルはconfigに推論ステップを分割するための`step_separator_ids`が設定されていないため、Step as Actionを採用するときはgenerate実行前にconfigに登録が必要。
