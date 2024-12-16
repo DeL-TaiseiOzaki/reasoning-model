@@ -87,21 +87,6 @@ class ReasoningModelForCausalLM():
         """
         return self.model.device
 
-    def __init__(self, model_name):
-        """
-        コンストラクタ。
-
-        Args:
-            model_name (str): 使用する事前学習済みモデル名。
-        """
-        super().__init__(AutoModelForCausalLM.from_pretrained(model_name).config)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            torch_dtype="auto",
-            device_map="auto"
-        )
-        self.model.eval()
-
     def contains_eos_id(self, token_list):
         """
         与えられたトークン列にEOSトークンIDが含まれるか判定する。
