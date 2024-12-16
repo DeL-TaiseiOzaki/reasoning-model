@@ -5,15 +5,6 @@
  - モデルはトークンのリストと探索した木構造を返します。
  - `tree_utils` の `print_tree_with_best_path` を使うと、ツリー構造の確認ができます。
 
-## インストール
-
-[Poetry](https://python-poetry.org/) を利用して依存関係を管理しています。  
-以下のコマンドでインストールできます。
-
-```bash
-poetry install
-```
-
 ## 使い方
 ### 準備
 ```
@@ -84,3 +75,29 @@ print(final_text)
 print("=== ツリー構造 ===")
 print_tree_with_best_path(final_node, tokenizer)
 ```
+
+## 注意事項
+未検証だが、おそらく `Qwen/QwQ-32B-Preview` や `AIDC-AI/Marco-o1` のようなモデルも実行可能。
+ただし、これらのモデルはconfigに推論ステップを分割するための`step_separator_ids`が設定されていないため、Step as Actionを採用するときはgenerate実行前にconfigに登録が必要。
+
+```
+# step_separator_idsの登録
+step_separators = ["\n\n"]
+step_separator_ids = [tokenizer.encode(step_separator, add_special_tokens=False)[0] for step_separator in step_separators]
+model.config.step_separator_ids = step_separator_ids
+```
+
+もしくは、generate時にgenerateにstep_separator_idsを設定する。
+```
+# 生成時にstep_separator_idsを設定
+step_separators = ["\n\n"]
+step_separator_ids = [tokenizer.encode(step_separator, add_special_tokens=False)[0] for step_separator in step_separators]
+
+# MCTSを用いて生成
+final_tokens, final_node = model.generate(
+    **model_inputs,
+    step_separator_ids=step_separator_ids,
+)
+```
+
+
