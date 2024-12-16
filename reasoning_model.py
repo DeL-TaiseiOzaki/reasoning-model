@@ -1,8 +1,7 @@
-import math
 import numpy as np
 import torch
 import torch.nn.functional as F
-from transformers import AutoModelForCausalLM, StoppingCriteriaList, PreTrainedModel, StoppingCriteria
+from transformers import AutoModelForCausalLM, StoppingCriteriaList, StoppingCriteria
 
 class StepSeparatorStoppingCriteria(StoppingCriteria):
     """
@@ -27,14 +26,66 @@ class StepSeparatorStoppingCriteria(StoppingCriteria):
         return input_ids[0, -1].item() == self.step_separator_id
 
 
-class ReasoningCausalLM(PreTrainedModel):
+class ReasoningModelForCausalLM():
     """
-    ReasoningCausalLMは、AutoModelForCausalLMを拡張してMCTSによる生成を行うモデルクラスです。
-    このクラスはトークン列を直接入力し、トークン列で出力します。
-    テキストのトークナイズやデコードは外部で行ってください。
-
+    ReasoningModelForCausalLMはAutoModelForCausalLMでロードしたモデルを内部に持ち、MCTSによる推論を行うためのラッパークラスです。
     MCTSを用いて、逐次的なステップごとのサンプル生成を試み、その中からUCB1などを用いて最良と思われるノードを選択します。
+
+    Transformersライクな使用感を目指し、以下を提供します。
+    - from_pretrained でのモデルロード
+    - configプロパティでモデル設定へのアクセス
+    - toメソッドでデバイスやdtype変更を可能にする
     """
+
+    def __init__(self, model):
+        """
+        コンストラクタ。直接呼ぶのではなく、from_pretrainedを利用してください。
+
+        Args:
+            model (PreTrainedModel): AutoModelForCausalLM.from_pretrainedでロードしたモデル。
+        """
+        self.model = model
+        self.model.eval()
+
+    @classmethod
+    def from_pretrained(cls, model_name, torch_dtype="auto", device_map="auto", **kwargs):
+        """
+        TransformersのAutoモデルと同様のインターフェースでモデルをロードするクラスメソッド。
+
+        Args:
+            model_name (str): モデル名（HuggingFace HubのIDなど）
+            torch_dtype (str or torch.dtype, optional): モデルロード時のdtype指定。デフォルト"auto"。
+            device_map (str or Dict, optional): デバイス配置指定。デフォルト"auto"。
+            **kwargs: その他AutoModelForCausalLM.from_pretrainedに渡したい追加の引数。
+
+        Returns:
+            ReasoningCausalLM: 初期化済みのReasoningCausalLMインスタンス。
+        """
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=torch_dtype,
+            device_map=device_map,
+            **kwargs
+        )
+        return cls(model)
+    
+    @property
+    def config(self):
+        """
+        モデルのconfigを返すプロパティ。
+        Transformersモデルと同様にmodel.configで参照可能。
+
+        Returns:
+            PretrainedConfig: モデルの設定オブジェクト
+        """
+        return self.model.config
+
+    @property
+    def device(self):
+        """
+        モデルが配置されているデバイスを返すプロパティ。
+        """
+        return self.model.device
 
     def __init__(self, model_name):
         """
@@ -166,3 +217,22 @@ class ReasoningCausalLM(PreTrainedModel):
         for tokens in complete_path_tokens:
             final_tokens.extend(tokens)
         return final_tokens, final_node
+    
+    def to(self, **kwargs):
+        """
+        モデルを指定したデバイスやdtypeへ移動または変換する。
+        torch.nn.Module.to(**kwargs)と同様に呼び出し側でdevice, dtypeを指定できる。
+
+        例:
+          model.to(device="cuda")
+          model.to(dtype=torch.bfloat16)
+          model.to(device="cuda", dtype=torch.bfloat16)
+
+        Args:
+            **kwargs: device, dtypeなどtorch.nn.Module.toで受け取れる引数
+
+        Returns:
+            self
+        """
+        self.model.to(**kwargs)
+        return self
