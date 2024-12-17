@@ -11,6 +11,14 @@
     - 探索した木構造
  - `tree_utils` の `print_tree_with_best_path` を使うと、ツリー構造が選択されたパスと共に可視化できます。
 
+## 対象モデル
+以下のモデルで動くことは確認済み。基本的に、Transformersライブラリの `AutoModelForCausalLM` で動かせるモデルは動かせるはずです。
+ - [HachiML/QwQ-CoT-0.5B-JA](https://huggingface.co/HachiML/QwQ-CoT-0.5B-JA)
+ - [Qwen/QwQ-32B-Preview](https://huggingface.co/Qwen/QwQ-32B-Preview)
+ - [AIDC-AI/Marco-o1](https://huggingface.co/AIDC-AI/Marco-o1)
+ - [Kendamarron/llm-jp-3-3.7b-o1-v0.1](https://huggingface.co/Kendamarron/llm-jp-3-3.7b-o1-v0.1)
+ - [Kendamarron/Qwen2.5-7B-o1-ja-v0.1](https://huggingface.co/Kendamarron/Qwen2.5-7B-o1-ja-v0.1)
+
 ⚠️ Limitations: 精度向上の確認は、自身で学習させたCoTモデルである [HachiML/QwQ-CoT-0.5B-JA](https://huggingface.co/HachiML/QwQ-CoT-0.5B-JA) でのみ行われています。Marco-o1、QwQ-32B-Previewなどの他のモデルでの精度向上はあくまで保証されません。
 
 ## 使い方
