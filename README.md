@@ -1,9 +1,5 @@
 # MCTS-Integrated Causal LM Generation
 
-<p align="center">
-  <img src="assets/top_image.png" alt="Top Image">
-</p>
-
 <div align="center">
 
 <img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License">
@@ -13,6 +9,10 @@
 :octocat: [**Github**](https://github.com/Hajime-Y/reasoning-model)  🤗  [**Hugging Face**](https://huggingface.co/collections/HachiML/reasoning-model-675ff6e972e4137892ff396b) 📝  [**Blog**](https://note.com/hatti8/n/n547d03c6a5c9) 🧑‍💻 [**Model**](https://huggingface.co/HachiML/QwQ-CoT-0.5B-JA) 🗂️  [**Data**](https://huggingface.co/datasets/HachiML/OpenMathInstruct-2-CoT-JA)
 
 </div>
+
+<p align="center">
+  <img src="assets/top_image.png" alt="Top Image">
+</p>
 
 #
 
