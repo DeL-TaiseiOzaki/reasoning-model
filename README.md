@@ -11,7 +11,7 @@
     - 探索した木構造
  - `tree_utils` の `print_tree_with_best_path` を使うと、ツリー構造が選択されたパスと共に可視化できます。
 
-## 対象モデル
+## 🤖 対象モデル
 以下のモデルで動くことは確認済み。基本的に、Transformersライブラリの `AutoModelForCausalLM` で動かせるモデルはGGUF含めて動かせるはずです。
  - [HachiML/QwQ-CoT-0.5B-JA](https://huggingface.co/HachiML/QwQ-CoT-0.5B-JA)
  - [Qwen/QwQ-32B-Preview](https://huggingface.co/Qwen/QwQ-32B-Preview)
@@ -22,7 +22,7 @@
 
 ⚠️ Limitations: 精度向上の確認は、自身で学習させたCoTモデルである [HachiML/QwQ-CoT-0.5B-JA](https://huggingface.co/HachiML/QwQ-CoT-0.5B-JA) でのみ行われています。Marco-o1、QwQ-32B-Previewなどの他のモデルでの精度向上はあくまで保証されません。
 
-## 使い方
+## 📝 使い方
 ### 準備
 ```
 # GitHubリポジトリからクローン
@@ -112,7 +112,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, gguf_file=file_name)
 model = ReasoningModelForCausalLM.from_pretrained(model_name, gguf_file=file_name)
 ```
 
-## 注意事項
+## 🚨 注意事項
 未検証だが、おそらく `Qwen/QwQ-32B-Preview` や `AIDC-AI/Marco-o1` のようなモデルも実行可能。
 ただし、これらのモデルはconfigに推論ステップを分割するための`step_separator_ids`が設定されていないため、Step as Actionを採用するときはgenerate実行前にconfigに登録が必要。
 
