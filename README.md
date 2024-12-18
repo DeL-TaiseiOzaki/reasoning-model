@@ -4,6 +4,18 @@
   <img src="assets/top_image.png" alt="Top Image">
 </p>
 
+<div align="center">
+
+<img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License">
+<img src="https://img.shields.io/github/stars/Hajime-Y/reasoning-model?color=yellow" alt="Stars">
+<img src="https://img.shields.io/github/issues/Hajime-Y/reasoning-model?color=red" alt="Issues">
+
+:octocat: [**Github**](https://github.com/Hajime-Y/reasoning-model)  🤗  [**Hugging Face**](https://huggingface.co/collections/HachiML/reasoning-model-675ff6e972e4137892ff396b) 📝  [**Blog**](https://note.com/hatti8/n/n547d03c6a5c9) 🧑‍💻 [**Model**](https://huggingface.co/HachiML/QwQ-CoT-0.5B-JA) 🗂️  [**Data**](https://huggingface.co/datasets/HachiML/OpenMathInstruct-2-CoT-JA)
+
+</div>
+
+#
+
 本プロジェクトでは、Hugging Face Transformersの `AutoModelForCausalLM` を拡張し、Monte Carlo Tree Search (MCTS) を用いたステップごとの探索に基づくテキスト生成を実行します。 これによって、CoTデータセットで学習されたモデルの推論能力を更に向上させます。 
  - `ReasoningModelForCausalLM` はトークン列を直接受け取り、MCTSによる探索を行います。
  - モデルは`.generate`後に、以下を返します。
