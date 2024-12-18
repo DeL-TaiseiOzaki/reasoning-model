@@ -61,6 +61,10 @@ model = ReasoningModelForCausalLM.from_pretrained(
 
 system_prompt = "You are a helpful and harmless assistant. You should think step-by-step."  # 固定を推奨
 prompt = "231 + 65*6 = ?"
+messages = [
+    {"role": "system", "content": system_prompt},
+    {"role": "user", "content": prompt}
+]
 
 # chat_templateとtokenize
 text = tokenizer.apply_chat_template(
