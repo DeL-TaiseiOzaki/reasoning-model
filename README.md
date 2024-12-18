@@ -136,4 +136,7 @@ final_tokens, final_node = model.generate(
 )
 ```
 
+## 🙏I NEED YOUR CONTRIBUTION
 
+本プロジェクトは実験的な段階にあり、改善のためのフィードバックやContributionを募集中です！
+気になったことがあれば、IssueやPull Requestをお気軽にお寄せください🙌
